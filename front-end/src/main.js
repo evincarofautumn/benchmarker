@@ -197,17 +197,17 @@ var xamarinPerformanceStart;
 
 	    let machineSelect = <select size="6" value={machineId} onChange={this.machineSelected.bind (this)}>
 		{
-		    this.props.controller.allMachines.map (m => <option value={m.id}>{m.get ('name')}</option>)
+		    this.props.controller.allMachines.map (m => <option value={m.id} key={m.id}>{m.get ('name')}</option>)
 		}
 		</select>;
 	    let configSelect = <select size="6" value={this.state.configName} onChange={this.configSelected.bind (this)}>
 		{
-		    this.props.controller.allConfigNames.map (c => <option value={c}>{c}</option>)
+		    this.props.controller.allConfigNames.map (c => <option value={c} key={c}>{c}</option>)
 		}
 		</select>;
-	    let runSetsSelect = <select size="6" selectedIndex="-1" value={runSetId} onChange={this.runSetSelected.bind (this)}>
+	    let runSetsSelect = <select size="6" value={runSetId} onChange={this.runSetSelected.bind (this)}>
 		{
-		    filteredRunSets.map (rs => <option value={rs.id}>{rs.get ('startedAt').toString ()}</option>)
+		    filteredRunSets.map (rs => <option value={rs.id} key={rs.id}>{rs.get ('startedAt').toString ()}</option>)
 		}
 		</select>;
 
@@ -234,7 +234,7 @@ var xamarinPerformanceStart;
 	    return <div style={{display: "inline-block"}}>
 		{mono}<br/>
 		{
-		    Object.keys (envVars).map (name => <div>{name + "=" + envVars [name]}</div>)
+		    Object.keys (envVars).map (name => <div key={name}>{name + "=" + envVars [name]}</div>)
 		}
 	    	{options.toString ()}
 	    </div>;
