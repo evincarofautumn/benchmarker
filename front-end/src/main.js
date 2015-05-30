@@ -178,7 +178,7 @@ var xamarinPerformanceStart;
 	    console.log (this.state);
 
 	    if (this.state.loading)
-		return <div>loading</div>;
+		return <form className="RunSetSelector">loading</form>;
 
 	    let machineId, runSetId, filteredRunSets;
 
@@ -195,17 +195,17 @@ var xamarinPerformanceStart;
 
 	    console.log (filteredRunSets);
 
-	    let machineSelect = <select size="6" value={machineId} onChange={this.machineSelected.bind (this)}>
+	    let machineSelect = <select name="machine" size="6" value={machineId} onChange={this.machineSelected.bind (this)}>
 		{
 		    this.props.controller.allMachines.map (m => <option value={m.id} key={m.id}>{m.get ('name')}</option>)
 		}
 		</select>;
-	    let configSelect = <select size="6" value={this.state.configName} onChange={this.configSelected.bind (this)}>
+	    let configSelect = <select name="config" size="6" value={this.state.configName} onChange={this.configSelected.bind (this)}>
 		{
 		    this.props.controller.allConfigNames.map (c => <option value={c} key={c}>{c}</option>)
 		}
 		</select>;
-	    let runSetsSelect = <select size="6" value={runSetId} onChange={this.runSetSelected.bind (this)}>
+	    let runSetsSelect = <select name="runSet" size="6" value={runSetId} onChange={this.runSetSelected.bind (this)}>
 		{
 		    filteredRunSets.map (rs => <option value={rs.id} key={rs.id}>{rs.get ('startedAt').toString ()}</option>)
 		}
@@ -213,30 +213,48 @@ var xamarinPerformanceStart;
 
 	    console.log ("runSetId is " + runSetId);
 
-	    return <div>
-		{machineSelect}
-	    	{configSelect}
-	    	{runSetsSelect}
-	    	{this.renderRunSetDescription ()}
-		</div>;
+	    return <form className="RunSetSelector">
+		<table cellSpacing="0" cellPadding="0">
+		<tr><th>Machine</th><th>Config</th><th>Run Set</th><th>Description</th></tr>
+		<tr>
+		<td className="RunSetSelector-selectorColumn">{machineSelect}</td>
+	    	<td className="RunSetSelector-selectorColumn">{configSelect}</td>
+	    	<td className="RunSetSelector-selectorColumn">{runSetsSelect}</td>
+	    	<td>{this.renderRunSetDescription ()}</td>
+		</tr>
+		</table>
+		</form>;
 	}
 
 	renderRunSetDescription () {
 	    let runSet = this.state.runSet;
 
 	    if (runSet === undefined)
-		return <div style={{display: "inline-block"}}>?</div>;
+		return <div className="RunSetSelector-description"></div>;
 
-	    let mono = runSet.get ('monoExecutable') || "";
-	    let envVars = runSet.get ('monoEnvironmentVariables') || {};
-	    let options = runSet.get ('monoOptions') || [];
+	    let mono = runSet.get ('monoExecutable');
+	    let envVars = runSet.get ('monoEnvironmentVariables')
+	    let options = runSet.get ('monoOptions');
 
-	    return <div style={{display: "inline-block"}}>
-		{mono}<br/>
+	    return <div className="RunSetSelector-description">
+		<dl>
+		<dt>Mono Executable</dt>
+		<dd>{ mono !== undefined ? mono : "No mono executable available." }</dd>
+		<dt>Environment Variables</dt>
+		<dd>
+		<ul>
 		{
-		    Object.keys (envVars).map (name => <div key={name}>{name + "=" + envVars [name]}</div>)
+		    envVars !== undefined
+			? Object.keys (envVars).map (name => <li key={name}>{name + "=" + envVars [name]}</li>)
+			: "No environment variables available."
 		}
-	    	{options.toString ()}
+		</ul>
+		</dd>
+		<dt>Command-line Options</dt>
+		<dd>{ options !== undefined
+		      ? options.toString ()
+		      : "No options available." }</dd>
+		</dl>
 	    </div>;
 	}
 
